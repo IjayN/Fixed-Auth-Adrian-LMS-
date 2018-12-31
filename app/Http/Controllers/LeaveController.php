@@ -57,23 +57,23 @@ class LeaveController extends Controller
       $beginday=date('2019/01/02');
       $lastday=date('2019/01/22');
 
-      $nr_work_days = getWorkingDays($beginday,$lastday);
+      $nr_work_days = $this->getWorkingDays($beginday,$lastday);
       echo $nr_work_days;
     }
-    
+
     public function getWorkingDays($startDate, $endDate){
       $begin=strtotime($startDate);
       $end=strtotime($endDate);
 
       if($begin>$end){
-        echo “startdate is in the future! <br />”;
+        echo "startdate is in the future! <br />";
         return 0;
       }else{
         $no_days=0;
         $weekends=0;
         while($begin<=$end){
           $no_days++; // no of days in the given interval
-          $what_day=date(“N”,$begin);
+          $what_day=date("N",$begin);
           if($what_day>5) { // 6 and 7 are weekend days
                 $weekends++;
           };
