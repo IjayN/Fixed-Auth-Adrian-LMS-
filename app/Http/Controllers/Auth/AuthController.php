@@ -108,7 +108,7 @@ class AuthController extends Controller
         $check = User::where('email', $email)->value('active');
 
         if ($check === 0){
-          return $check;
+            return $this->prepareResult(1, $check, [],"Success");
         }else{
 
         $credentials = request(['email', 'password']);
@@ -162,5 +162,15 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json($request->user());
+    }
+
+    private function prepareResult($status, $data, $errors,$msg)
+
+    {
+        if ($errors == null) {
+            return ['status' => $status,'payload'=> $data,'message' => $msg];
+        } else {
+            return ['status' => $status, 'message' => $msg,'errors' => $errors];
+        }
     }
 }
