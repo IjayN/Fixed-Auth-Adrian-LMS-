@@ -42,12 +42,18 @@ class AuthController extends Controller
         ]);
 
         $user->save();
-        $from = "test@us.com";
-        $to = $request->email;
-        $subject = "password";
-        $message = $initialPass;
-        $headers = "From:" . $from;
-        mail($to,$subject,$message, $headers);
+
+        
+        $reportdate="$start";
+
+        $data['name']="Test";
+        $data['to']=$request->email;
+        $data['message']=$initialPass;
+        $data['subject']="Password";
+        $data['template']="email.password";
+        $data['sender']="test@us.com";
+        $data['sendername']="Test Name";
+        $this->sendEmail($data);
 
 
         $avatar = Avatar::create($user->name)->getImageObject()->encode('png');
@@ -60,6 +66,14 @@ class AuthController extends Controller
         ], 201);
     }
 
+    public function sendEmail($data){
+        $template=$data['template'];
+          Mail::send(['html' => $template],$data, function($message) use ($data){
+             $message->to($data['to'],$data['name']))->subject($data['subject']);
+             $message->from($data['sender'],$data['sendername']);
+          });
+          //echo "HTML Email Sent. Check your inbox.";
+       }
     /**
      * Confirm your account user (Activate)
      *
@@ -109,12 +123,16 @@ class AuthController extends Controller
         $check = User::where('email', $email)->value('active');
 
         if ($check === 0){
+<<<<<<< HEAD
 
             $user_type = DB::table('users')
                               ->where('email', $email)
                               ->select('user_type')
                               ->get();
 
+=======
+            $user_type = User::where('email', $email)->pluck('user_type');
+>>>>>>> 8a06577350396cc3928460ac84260d3917213c4e
             return $this->prepareResult($check, $user_type, [],"Success");
         }else{
 
@@ -172,7 +190,6 @@ class AuthController extends Controller
     }
 
     private function prepareResult($status, $data, $errors,$msg)
-
     {
         if ($errors == null) {
             return ['status' => $status,'payload'=> $data,'message' => $msg];
