@@ -21,5 +21,6 @@ require __DIR__ . '/auth/auth.php';
 require __DIR__ . '/auth/passwordReset.php';
 
 Route::post('/applyLeave', 'LeaveController@applyLeave');
-Route::get('/employees/{id}', 'LeaveController@employees');
+Route::get('/department_employees/{id}', 'LeaveController@employees_departments');
+Route::get('/employees', 'LeaveController@employees');
 Route::get('/leaveHistory/{id}', 'LeaveController@leaveHistory');

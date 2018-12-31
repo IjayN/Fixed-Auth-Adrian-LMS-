@@ -26,14 +26,19 @@ class LeaveController extends Controller
       return $history;
     }
 
-    public function employees($id, Request $request){
+    public function employees_departments($id, Request $request){
       $department = User::where('id', $id)->value('department');
-      $employees = User::where('department', $department);
-      // return $employees;
-      
+      $employees = User::where('department', $department)->where('active',1)->get();
+
       return $this->prepareResult(1, $employees, [],"Success");
     }
-    
+
+    public function employees(){
+      $employees = User::where('active',1)->get();
+
+      return $this->prepareResult(1, $employees, [],"Success");
+    }
+
     private function prepareResult($status, $data, $errors,$msg)
     {
         if ($errors == null) {
