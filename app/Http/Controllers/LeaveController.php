@@ -21,13 +21,25 @@ class LeaveController extends Controller
 
     }
 
-    public function employees(Request $request){
-      $employees = User::where('user_type', 'normal');
-      return $employees;
-    }
-
     public function leaveHistory($id){
       $history = Leave::where('id', $id)->get();
       return $history;
+    }
+
+    public function employees($id, Request $request){
+      $department = User::where('id', $id)->value('department');
+      $employees = User::where('department', $department);
+      // return $employees;
+      
+      return $this->prepareResult(1, $employees, [],"Success");
+    }
+    
+    private function prepareResult($status, $data, $errors,$msg)
+    {
+        if ($errors == null) {
+            return ['status' => $status,'payload'=> $data,'message' => $msg];
+        } else {
+            return ['status' => $status, 'message' => $msg,'errors' => $errors];
+        }
     }
 }

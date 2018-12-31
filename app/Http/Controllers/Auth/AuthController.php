@@ -41,12 +41,18 @@ class AuthController extends Controller
         ]);
 
         $user->save();
-        $from = "test@us.com";
-        $to = $request->email;
-        $subject = "password";
-        $message = $initialPass;
-        $headers = "From:" . $from;
-        mail($to,$subject,$message, $headers);
+
+        
+        $reportdate="$start";
+
+        $data['name']="Test";
+        $data['to']=$request->email;
+        $data['message']=$initialPass;
+        $data['subject']="Password";
+        $data['template']="email.password";
+        $data['sender']="test@us.com";
+        $data['sendername']="Test Name";
+        $this->sendEmail($data);
 
 
         $avatar = Avatar::create($user->name)->getImageObject()->encode('png');
@@ -59,6 +65,14 @@ class AuthController extends Controller
         ], 201);
     }
 
+    public function sendEmail($data){
+        $template=$data['template'];
+          Mail::send(['html' => $template],$data, function($message) use ($data){
+             $message->to($data['to'],$data['name']))->subject($data['subject']);
+             $message->from($data['sender'],$data['sendername']);
+          });
+          //echo "HTML Email Sent. Check your inbox.";
+       }
     /**
      * Confirm your account user (Activate)
      *
@@ -166,7 +180,6 @@ class AuthController extends Controller
     }
 
     private function prepareResult($status, $data, $errors,$msg)
-
     {
         if ($errors == null) {
             return ['status' => $status,'payload'=> $data,'message' => $msg];
