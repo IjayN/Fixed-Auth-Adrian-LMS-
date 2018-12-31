@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
-// use App\Leave;
+use App\Leave;
+use App\Holidays;
 
 class LeaveController extends Controller
 {
@@ -79,7 +80,26 @@ class LeaveController extends Controller
           };
           $begin+=86400; // +1 day
         };
+
         $working_days=$no_days-$weekends;
+
+        $holiday_dates = DB::table('holidays')
+                        ->select('holiday_date')
+                        ->get();
+        foreach ($holiday_dates as $value) {
+          $holidays = array();
+          $y = date("Y");
+          $values = $y.$value
+          array_push($holidays, $values);
+
+          //Subtract the holidays
+          foreach($holidays as $holiday){
+            $time_stamp=strtotime($holiday);
+            //If the holiday doesn't fall in weekend
+            if ($startDate <= $time_stamp && $time_stamp <= $endDate && date("N",$time_stamp) != 6 && date("N",$time_stamp) != 7)
+                $working_days--;
+          }
+        }
         return $working_days;
       }
   }
