@@ -109,7 +109,7 @@ class AuthController extends Controller
 
         if ($check === 0){
             $user_type = User::where('email', $email)->pluck('user_type');
-            return $this->prepareResult(1, $check, [$user_type],"Success");
+            return $this->prepareResult($check, $user_type, [],"Success");
         }else{
 
         $credentials = request(['email', 'password']);
