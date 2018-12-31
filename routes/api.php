@@ -24,3 +24,4 @@ Route::post('/applyLeave', 'LeaveController@applyLeave');
 Route::get('/department_employees/{id}', 'LeaveController@employees_departments');
 Route::get('/employees', 'LeaveController@employees');
 Route::get('/leaveHistory/{id}', 'LeaveController@leaveHistory');
+Route::get('/calculateLeave/{id}', 'LeaveController@calculate_days');
