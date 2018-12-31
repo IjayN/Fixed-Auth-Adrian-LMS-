@@ -61,19 +61,28 @@ class AuthController extends Controller
         // Storage::put('avatars/'.$user->id.'/avatar.png', (string) $avatar);
 
         // $user->notify(new SignupActivate($user));
-
+        // Mail::send('email.password', ['title' => "Password", 'content' => $initialPass], function ($message)
+        // {
+        //
+        //     $message->from('me@gmail.com', 'Christian Nwamba');
+        //
+        //     $message->to($to);
+        //
+        // });
+        return $data;
         return response()->json([
             'message' => __('auth.signup_success')
         ], 201);
     }
 
     public function sendEmail($data){
-        // $template=$data['template'];
+
+
           Mail::send($data['template'],$data, function($message) use ($data){
              $message->to($data['to'],$data['name'])->subject($data['subject']);
              $message->from($data['sender'],$data['sendername']);
           });
-          //echo "HTML Email Sent. Check your inbox.";
+          echo "HTML Email Sent. Check your inbox.";
        }
     /**
      * Confirm your account user (Activate)
@@ -132,7 +141,7 @@ class AuthController extends Controller
 
             $user_type = User::where('email', $email)->pluck('user_type');
 
-            return $this->prepareResult($check, $user_type, [],"Success");
+            return $this->prepareResult($check, $user_type, [],"Check mail for login credentials.");
         }else{
 
         $credentials = request(['email', 'password']);

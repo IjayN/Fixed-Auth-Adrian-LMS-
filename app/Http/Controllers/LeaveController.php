@@ -4,26 +4,33 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
-use App\Leave;
+use App\LeaveApplication;
 use App\Holidays;
+use DB;
+use Mail;
 
 class LeaveController extends Controller
 {
-    public function applyLeave(Request $request){
+    public function applyLeave($id, Request $request){
 
-      $leave = new Leave([
-          'type'      => $request->typeOfLeave,
-          'startDate' => $request->startDate,
-          'endDate'   => $request->endDate,
-          'reliever'  => $request->reliever
+      $nr_work_days = $this->calculate_days($id, $request->startDate, $request->endDate);
+
+      $leave = new LeaveApplication([
+          'type'        => $request->type,
+          'startDate'   => $request->startDate,
+          'endDate'     => $request->endDate,
+          'reliever'    => $request->reliever,
+          'leave_days'  => ". $this->calculate_days($id, $request->startDate, $request->endDate) ."
+
       ]);
 
       $leave->save();
-
+      // $nr_work_days;
+      return $this->prepareResult(1, $leave, [],"Success");
     }
 
     public function leaveHistory($id){
-      $history = Leave::where('id', $id)->get();
+      $history = LeaveApplication::where('id', $id)->get();
       return $history;
     }
 
@@ -50,22 +57,19 @@ class LeaveController extends Controller
     }
 
     // calculate days
-    public function calculate_days($id, Request $request){
-      $start = $request->startDate;
-      $end = $request->endDate;
-      $reliever = $request->reliever;
+    public function calculate_days($id, $start, $end){
 
-      $beginday=date('2019/01/02');
-      $lastday=date('2019/01/22');
+      $beginday=date($start);
+      $lastday=date($end);
 
       $nr_work_days = $this->getWorkingDays($beginday,$lastday);
-      echo $nr_work_days;
+      return $nr_work_days;
     }
 
     public function getWorkingDays($startDate, $endDate){
       $begin=strtotime($startDate);
       $end=strtotime($endDate);
-
+      // print_r($startDate);
       if($begin>$end){
         echo "startdate is in the future! <br />";
         return 0;
@@ -83,25 +87,38 @@ class LeaveController extends Controller
 
         $working_days=$no_days-$weekends;
 
-        $holiday_dates = DB::table('holidays')
-                        ->select('holiday_date')
-                        ->get();
-        foreach ($holiday_dates as $value) {
-          $holidays = array();
-          $y = date("Y");
-          $values = $y.$value
-          array_push($holidays, $values);
+        echo $working_days;
 
-          //Subtract the holidays
-          foreach($holidays as $holiday){
-            $time_stamp=strtotime($holiday);
-            //If the holiday doesn't fall in weekend
-            if ($startDate <= $time_stamp && $time_stamp <= $endDate && date("N",$time_stamp) != 6 && date("N",$time_stamp) != 7)
-                $working_days--;
-          }
-        }
-        return $working_days;
+        // $holiday_dates = DB::table('holidays')
+        //                 ->select('holiday_date')
+        //                 ->get();
+        // foreach ($holiday_dates as $value) {
+        //   $holidays = array();
+        //   $y = date("Y");
+        //   $values = "2019/".$value->holiday_date;
+        //   // $values = $y."/".$value->holiday_date;
+        //   $r = array_push($holidays, $values);
+        //   // print_r($value);
+        //   //Subtract the holidays
+        //   foreach($holidays as $holiday){
+        //     // print_r($holiday);
+        //     $time_stamp=strtotime($holiday);
+        //     // print_r($time_stamp);
+        //     //If the holiday doesn't fall in weekend
+        //     if ($startDate <= $time_stamp && $time_stamp <= $endDate && date("N",$time_stamp) != 6 && date("N",$time_stamp) != 7)
+        //         $working_days--;
+        //         // print_r ($working_days);
+        //                 return $working_days;
+        //   }
+        // }
+
       }
   }
+  public function mail()
+  {
+     $name = 'Krunal';
+     Mail::to('mageto.denis@gmail.com')->send(new SendMailable($name));
 
+     return 'Email was sent';
+  }
 }

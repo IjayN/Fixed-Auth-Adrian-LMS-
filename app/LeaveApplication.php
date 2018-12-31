@@ -3,12 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LeaveApplication extends Model
 {
-  use Notifiable, SoftDeletes;
+  use SoftDeletes;
 
   protected $dates = ['deleted_at'];
+  protected $table = 'leave_application';
 
   /**
    * The attributes that are mass assignable.
@@ -16,6 +18,6 @@ class LeaveApplication extends Model
    * @var array
    */
   protected $fillable = [
-      'type', 'startDate', 'endDate', 'reliever','HOD','HR','MD'
+      'type', 'startDate', 'endDate', 'reliever','leave_days','HOD','HR','MD'
   ];
 }

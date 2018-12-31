@@ -20,8 +20,9 @@ use Illuminate\Http\Request;
 require __DIR__ . '/auth/auth.php';
 require __DIR__ . '/auth/passwordReset.php';
 
-Route::post('/applyLeave', 'LeaveController@applyLeave');
+Route::post('/applyLeave/{id}', 'LeaveController@applyLeave');
 Route::get('/department_employees/{id}', 'LeaveController@employees_departments');
 Route::get('/employees', 'LeaveController@employees');
 Route::get('/leaveHistory/{id}', 'LeaveController@leaveHistory');
-Route::get('/calculateLeave/{id}', 'LeaveController@calculate_days');
+// Route::get('/calculateLeave/{id}', 'LeaveController@calculate_days');
+Route::get('/send/email', 'LeaveController@mail');

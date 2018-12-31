@@ -19,6 +19,7 @@ class LeaveApplicationTable extends Migration
           $table->string('startDate');
           $table->string('endDate');
           $table->string('reliever');
+          $table->string('leave_days');
           $table->string('HOD');
           $table->string('HR');
           $table->string('MD');
