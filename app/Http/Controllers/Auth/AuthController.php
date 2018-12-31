@@ -34,17 +34,18 @@ class AuthController extends Controller
         ]);
 
         $initialPass = str_random(8);
-        $user = new User([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($initialPass),
-            // 'activation_token' => str_random(60)
-        ]);
+        // $user = new User([
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'password' => bcrypt($initialPass),
+        //     'user_type' => $request->user_type,
+        //
+        //     // 'activation_token' => str_random(60)
+        // ]);
+        //
+        // $user->save();
 
-        $user->save();
 
-        
-        $reportdate="$start";
 
         $data['name']="Test";
         $data['to']=$request->email;
@@ -56,8 +57,8 @@ class AuthController extends Controller
         $this->sendEmail($data);
 
 
-        $avatar = Avatar::create($user->name)->getImageObject()->encode('png');
-        Storage::put('avatars/'.$user->id.'/avatar.png', (string) $avatar);
+        // $avatar = Avatar::create($user->name)->getImageObject()->encode('png');
+        // Storage::put('avatars/'.$user->id.'/avatar.png', (string) $avatar);
 
         // $user->notify(new SignupActivate($user));
 
@@ -67,9 +68,9 @@ class AuthController extends Controller
     }
 
     public function sendEmail($data){
-        $template=$data['template'];
-          Mail::send(['html' => $template],$data, function($message) use ($data){
-             $message->to($data['to'],$data['name']))->subject($data['subject']);
+        // $template=$data['template'];
+          Mail::send($data['template'],$data, function($message) use ($data){
+             $message->to($data['to'],$data['name'])->subject($data['subject']);
              $message->from($data['sender'],$data['sendername']);
           });
           //echo "HTML Email Sent. Check your inbox.";
@@ -123,16 +124,14 @@ class AuthController extends Controller
         $check = User::where('email', $email)->value('active');
 
         if ($check === 0){
-<<<<<<< HEAD
 
             $user_type = DB::table('users')
                               ->where('email', $email)
                               ->select('user_type')
                               ->get();
 
-=======
             $user_type = User::where('email', $email)->pluck('user_type');
->>>>>>> 8a06577350396cc3928460ac84260d3917213c4e
+
             return $this->prepareResult($check, $user_type, [],"Success");
         }else{
 

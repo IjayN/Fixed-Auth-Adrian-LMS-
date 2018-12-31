@@ -1,5 +1,5 @@
-{{ $content['headers'] }}
+<h4>{{ $name }}</h4>
 
-{{ $content['subject'] }}
+<p>{{ $subject }}</p>
 
-{{ $content['message'] }}
+<p>{{ $message }}</p>
