@@ -12,6 +12,7 @@ use App\Notifications\SignupActivate;
 use App\Notifications\SignupActivated;
 use App\User;
 use Mail;
+use DB;
 
 class AuthController extends Controller
 {
@@ -108,12 +109,13 @@ class AuthController extends Controller
         $check = User::where('email', $email)->value('active');
 
         if ($check === 0){
-<<<<<<< HEAD
-            return $this->prepareResult(0, $check, [],"Success");
-=======
-            $userType = User::where('email', $email)->pluck('userType');
-            return $this->prepareResult(1, $check, [$user_type],"Success");
->>>>>>> 4f425487e5fcb66c57ed284c222a2130360eea9c
+
+            $user_type = DB::table('users')
+                              ->where('email', $email)
+                              ->select('user_type')
+                              ->get();
+
+            return $this->prepareResult($check, $user_type, [],"Success");
         }else{
 
         $credentials = request(['email', 'password']);
